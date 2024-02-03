@@ -1,21 +1,23 @@
 package com.wewin.dashboartRestaurant.service.impl;
 
+import com.wewin.dashboartRestaurant.dto.EmployeDTO;
 import com.wewin.dashboartRestaurant.entity.Employe;
 import com.wewin.dashboartRestaurant.repository.EmployeRepository;
 import com.wewin.dashboartRestaurant.service.EmployeService;
 import lombok.AllArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
 public class EmployeServiceImpl implements EmployeService {
     private final EmployeRepository employeRepository;
     private final BCryptPasswordEncoder passwordEncoder;
+    private final ModelMapper modelMapper;
 
     private void encodeAndSaveEmploye(Employe employe) {
         String encodedPassword = passwordEncoder.encode(employe.getPassword());
@@ -24,47 +26,45 @@ public class EmployeServiceImpl implements EmployeService {
     }
 
     @Override
-    public List<Employe> getAllEmployes() {
-        return employeRepository.findAll();
+    public List<EmployeDTO> getAllEmployes() {
+        List<Employe> employes = employeRepository.findAll();
+        return employes.stream()
+                .map(employe -> modelMapper.map(employe, EmployeDTO.class))
+                .collect(Collectors.toList());
     }
 
     @Override
-    public Map<String, String> addEmploye(Employe employe) {
-        Map<String, String> response = new HashMap<>();
-        response.put("Message", "Employe added");
+    public void addEmploye(EmployeDTO employeDTO) {
+        Employe employe = modelMapper.map(employeDTO, Employe.class);
         encodeAndSaveEmploye(employe);
-        return response;
     }
 
-    @Override
-    public Map<String, String> updateEmploye(Long id, Employe employe) {
-        Map<String, String> response = new HashMap<>();
-        response.put("Message", "Employe update");
+    public void updateEmploye(Long id, EmployeDTO employeDTO) {
         Employe existingEmploye = employeRepository.findEmployeById(id);
-        existingEmploye.setName(employe.getName());
-        existingEmploye.setLastname(employe.getLastname());
-        existingEmploye.setRol(employe.getRol());
-        existingEmploye.setPassword(employe.getPassword());
-        existingEmploye.setPhone(employe.getPhone());
-        encodeAndSaveEmploye(existingEmploye);
-        return response;
+        if (existingEmploye != null) {
+            existingEmploye.setName(employeDTO.getName());
+            existingEmploye.setLastname(employeDTO.getLastname());
+            existingEmploye.setRol(employeDTO.getRol());
+            existingEmploye.setPhone(employeDTO.getPhone());
+            if (employeDTO.getPassword() != null && !employeDTO.getPassword().isEmpty()) {
+                String encodedPassword = passwordEncoder.encode(employeDTO.getPassword());
+                existingEmploye.setPassword(encodedPassword);
+            }
+            employeRepository.save(existingEmploye);
+        }
     }
 
+
     @Override
-    public Map<String, String> deleteEmploye(Long id) {
-        Map<String, String> response = new HashMap<>();
-        response.put("Message", "Employe remove");
+    public void deleteEmploye(Long id) {
         employeRepository.deleteById(id);
-        return response;
     }
 
     @Override
-    public Map<String, Employe> login(String phone, String password) {
+    public EmployeDTO login(String phone, String password) {
         Employe employe = employeRepository.findEmployeByPhone(phone);
-        Map<String, Employe> response = new HashMap<>();
         if (employe != null && passwordEncoder.matches(password, employe.getPassword())) {
-            response.put("User", employe);
-            return response;
+            return modelMapper.map(employe, EmployeDTO.class);
         }
         return null;
     }

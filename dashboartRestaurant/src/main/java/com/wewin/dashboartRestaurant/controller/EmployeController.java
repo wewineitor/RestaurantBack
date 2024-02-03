@@ -1,45 +1,45 @@
 package com.wewin.dashboartRestaurant.controller;
 
-import com.wewin.dashboartRestaurant.entity.Employe;
+import com.wewin.dashboartRestaurant.dto.EmployeDTO;
 import com.wewin.dashboartRestaurant.service.EmployeService;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/dashboard")
+@AllArgsConstructor
 public class EmployeController {
     private final EmployeService employeService;
 
-    public EmployeController(EmployeService employeService) {
-        this.employeService = employeService;
-    }
-
     @GetMapping("/employe")
-    public ResponseEntity<List<Employe>> getEmployes() {
-        return new ResponseEntity<>(employeService.getAllEmployes(), HttpStatus.OK);
+    public ResponseEntity<List<EmployeDTO>> getEmployes() {
+        return ResponseEntity.ok(employeService.getAllEmployes());
     }
 
     @PostMapping("/employe")
-    public ResponseEntity<Map<String, String>> addEmploye(@RequestBody Employe employe) {
-        return new ResponseEntity<>(employeService.addEmploye(employe), HttpStatus.CREATED);
+    public ResponseEntity<HttpStatus> addEmploye(@RequestBody EmployeDTO employeDTO) {
+        employeService.addEmploye(employeDTO);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Map<String, Employe>> login(@RequestBody Employe employe) {
-        return new ResponseEntity<>(employeService.login(employe.getPhone(), employe.getPassword()), HttpStatus.OK);
+    public ResponseEntity<EmployeDTO> login(@RequestBody EmployeDTO employeDTO) {
+        return  ResponseEntity.ok(employeService.login(employeDTO.getPhone(), employeDTO.getPassword()));
     }
 
     @PutMapping("/employe/{id}")
-    public ResponseEntity<Map<String, String>> updateEmploye(@PathVariable Long id, @RequestBody Employe employe) {
-        return new ResponseEntity<>(employeService.updateEmploye(id, employe), HttpStatus.OK);
+    public ResponseEntity<HttpStatus> updateEmploye(@PathVariable Long id, @RequestBody EmployeDTO employeDTO) {
+        employeService.updateEmploye(id, employeDTO);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @DeleteMapping("/employe/{id}")
-    public ResponseEntity<Map<String, String>> deleteEmploye(@PathVariable Long id) {
-        return new ResponseEntity<>(employeService.deleteEmploye(id), HttpStatus.OK);
+    public ResponseEntity<HttpStatus> deleteEmploye(@PathVariable Long id) {
+        employeService.deleteEmploye(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

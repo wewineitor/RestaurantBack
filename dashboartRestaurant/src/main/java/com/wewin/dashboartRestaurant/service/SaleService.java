@@ -1,10 +1,10 @@
 package com.wewin.dashboartRestaurant.service;
 
-import com.wewin.dashboartRestaurant.entity.Sale;
+import com.wewin.dashboartRestaurant.dto.SaleDTO;
 
 import java.util.List;
 
 public interface SaleService {
-    List<Sale> getSales();
-    void addSale(Sale sale);
+    List<SaleDTO> getSales();
+    void addSale(SaleDTO saleDTO);
 }

@@ -1,15 +1,13 @@
 package com.wewin.dashboartRestaurant.service;
 
-import com.wewin.dashboartRestaurant.entity.Employe;
+import com.wewin.dashboartRestaurant.dto.EmployeDTO;
 
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
 public interface EmployeService {
-    List<Employe> getAllEmployes();
-    Map<String, String> addEmploye(Employe employe);
-    Map<String, String> updateEmploye(Long id, Employe employe);
-    Map<String, String> deleteEmploye(Long id);
-    Map<String, Employe> login(String phone, String password);
+    List<EmployeDTO> getAllEmployes();
+    void addEmploye(EmployeDTO employe);
+    void updateEmploye(Long id, EmployeDTO employe);
+    void deleteEmploye(Long id);
+    EmployeDTO login(String phone, String password);
 }
