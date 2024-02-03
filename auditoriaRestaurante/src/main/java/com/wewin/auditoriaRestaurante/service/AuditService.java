@@ -1,11 +1,10 @@
 package com.wewin.auditoriaRestaurante.service;
 
-import com.wewin.auditoriaRestaurante.entity.Audit;
+import com.wewin.auditoriaRestaurante.dto.AuditDTO;
 
 import java.util.List;
-import java.util.Map;
 
 public interface AuditService {
-    List<Audit> getAllAudits();
-    Map<String, String> addAudit(Audit audit);
+    List<AuditDTO> getAllAudits();
+    void addAudit(AuditDTO auditDTO);
 }
