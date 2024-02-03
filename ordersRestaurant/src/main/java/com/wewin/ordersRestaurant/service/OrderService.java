@@ -1,13 +1,12 @@
 package com.wewin.ordersRestaurant.service;
 
-import com.wewin.ordersRestaurant.entity.Order;
+import com.wewin.ordersRestaurant.dto.OrderDTO;
 import com.wewin.ordersRestaurant.model.Sale;
 
 import java.util.List;
-import java.util.Map;
 
 public interface OrderService {
-    List<Order> getOrders(Integer table);
-    Map<String, String> addOrder(Order order);
+    List<OrderDTO> getOrders(Integer table);
+    void addOrder(OrderDTO orderDTO);
     Sale generateSale(Integer table);
 }

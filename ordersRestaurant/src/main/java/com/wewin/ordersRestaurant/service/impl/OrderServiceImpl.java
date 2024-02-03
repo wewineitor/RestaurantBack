@@ -1,36 +1,38 @@
 package com.wewin.ordersRestaurant.service.impl;
 
+import com.wewin.ordersRestaurant.dto.OrderDTO;
 import com.wewin.ordersRestaurant.entity.Order;
 import com.wewin.ordersRestaurant.model.Sale;
 import com.wewin.ordersRestaurant.repository.OrderRepository;
 import com.wewin.ordersRestaurant.service.OrderService;
 import jakarta.transaction.Transactional;
+import lombok.AllArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
+@AllArgsConstructor
 public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
+    private final ModelMapper modelMapper;
 
-    public OrderServiceImpl(OrderRepository orderRepository) {
-        this.orderRepository = orderRepository;
+
+    @Override
+    public List<OrderDTO> getOrders(Integer table) {
+        List<Order> orders = orderRepository.findOrdersByTableNumber(table);
+        return orders.stream()
+                .map(order -> modelMapper.map(order, OrderDTO.class))
+                .collect(Collectors.toList());
     }
 
     @Override
-    public List<Order> getOrders(Integer table) {
-        return orderRepository.findOrdersByTableNumber(table);
-    }
-
-    @Override
-    public Map<String, String> addOrder(Order order) {
-        Map<String, String> response = new HashMap<>();
-        response.put("Message", "Order added");
+    public void addOrder(OrderDTO orderDTO) {
+        Order order = modelMapper.map(orderDTO, Order.class);
         order.setTotal(order.getAmount() * order.getPrice());
-        orderRepository.save(order);
-        return response;
+        modelMapper.map(orderRepository.save(order), OrderDTO.class);
     }
 
     @Override
