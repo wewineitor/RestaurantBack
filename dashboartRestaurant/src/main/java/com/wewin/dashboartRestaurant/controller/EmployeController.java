@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/employe")
+@RequestMapping("/dashboard")
 public class EmployeController {
     private final EmployeService employeService;
 
@@ -18,12 +18,12 @@ public class EmployeController {
         this.employeService = employeService;
     }
 
-    @GetMapping
+    @GetMapping("/employe")
     public ResponseEntity<List<Employe>> getEmployes() {
         return new ResponseEntity<>(employeService.getAllEmployes(), HttpStatus.OK);
     }
 
-    @PostMapping
+    @PostMapping("/employe")
     public ResponseEntity<Map<String, String>> addEmploye(@RequestBody Employe employe) {
         return new ResponseEntity<>(employeService.addEmploye(employe), HttpStatus.CREATED);
     }
@@ -33,12 +33,12 @@ public class EmployeController {
         return new ResponseEntity<>(employeService.login(employe.getPhone(), employe.getPassword()), HttpStatus.OK);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/employe/{id}")
     public ResponseEntity<Map<String, String>> updateEmploye(@PathVariable Long id, @RequestBody Employe employe) {
         return new ResponseEntity<>(employeService.updateEmploye(id, employe), HttpStatus.OK);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/employe/{id}")
     public ResponseEntity<Map<String, String>> deleteEmploye(@PathVariable Long id) {
         return new ResponseEntity<>(employeService.deleteEmploye(id), HttpStatus.OK);
     }
